@@ -5,30 +5,25 @@
 ;
 
 .program hello
-; Repeatedly get one word of data from the TX FIFO, stalling when the FIFO is
-; empty. Write the least significant bit to the OUT pin group.
+;hsync - least significant bit
 
     pull block
     out y, 32
 .wrap_target
-
-    mov x, y
+    mov x, y             ; 01 x1
 loop:
-    set pins, 0b11 [31]
-    nop [8]
-    set pins, 0b10 [5]
-    set pins, 0b11 [1]
-    jmp x--, loop
-    set pins, 0b01 [31]
-    nop [8]
-    set pins, 0b00 [5]
-    set pins, 0b01 [9]
-    nop [31]
-    set pins, 0b00 [5]
-    set pins, 0b01
-    mov x, y
-    jmp loop
-
+    set pins, 0b11 [31]  ; 11 x32 
+    nop [8]              ; 11 x9
+    set pins, 0b10 [5]   ; 10 x6
+    set pins, 0b11 [1]   ; 11 x2
+    jmp x--, loop        ; 11 x1 (x490)
+    set pins, 0b01 [31]  ; 01 x32
+    nop [8]              ; 01 x9
+    set pins, 0b00 [5]   ; 00 x6
+    set pins, 0b01 [11]  ; 01 x12
+    nop [31]             ; 01 x32
+    set pins, 0b00 [5]   ; 00 x6
+    set pins, 0b01 [1]   ; 01 x2
 
 % c-sdk {
 static inline void hello_program_init(PIO pio, uint sm, uint offset, uint pin) {
