@@ -14,18 +14,18 @@
 
     mov x, y
 loop:
-    set pins, 0b00 [31]
+    set pins, 0b11 [31]
     nop [8]
-    set pins, 0b01 [5]
-    set pins, 0b00 [1]
+    set pins, 0b10 [5]
+    set pins, 0b11 [1]
     jmp x--, loop
-    set pins, 0b10 [31]
+    set pins, 0b01 [31]
     nop [8]
-    set pins, 0b11 [5]
-    set pins, 0b10 [9]
+    set pins, 0b00 [5]
+    set pins, 0b01 [9]
     nop [31]
-    set pins, 0b11 [5]
-    set pins, 0b10
+    set pins, 0b00 [5]
+    set pins, 0b01
     mov x, y
     jmp loop
 
