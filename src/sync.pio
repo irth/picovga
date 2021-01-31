@@ -1,10 +1,4 @@
-;
-; Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
-;
-; SPDX-License-Identifier: BSD-3-Clause
-;
-
-.program hello
+.program sync
 ;hsync - least significant bit
 
     pull block
@@ -15,7 +9,8 @@ loop:
     set pins, 0b11 [31]  ; 11 x32 
     nop [8]              ; 11 x9
     set pins, 0b10 [5]   ; 10 x6
-    set pins, 0b11 [1]   ; 11 x2
+    set pins, 0b11       ; 11 x2
+    nop
     jmp x--, loop        ; 11 x1 (x490)
     set pins, 0b01 [31]  ; 01 x32
     nop [8]              ; 01 x9
@@ -26,21 +21,14 @@ loop:
     set pins, 0b01 [1]   ; 01 x2
 
 % c-sdk {
-static inline void hello_program_init(PIO pio, uint sm, uint offset, uint pin) {
-    pio_sm_config c = hello_program_get_default_config(offset);
-
-    // Map the state machine's OUT pin group to one pin, namely the `pin`
-    // parameter to this function.
+static inline void sync_program_init(PIO pio, uint sm, uint offset, uint pin) {
+    pio_sm_config c = sync_program_get_default_config(offset);
     sm_config_set_set_pins(&c, pin, 2);
     sm_config_set_clkdiv_int_frac(&c, 79, 114);
-    // Set this pin's GPIO function (connect PIO to the pad)
     pio_gpio_init(pio, pin);
     pio_gpio_init(pio, pin+1);
-    // Set the pin direction to output at the PIO
     pio_sm_set_consecutive_pindirs(pio, sm, pin, 2, true);
-    // Load our configuration, and jump to the start of the program
     pio_sm_init(pio, sm, offset, &c);
-    // Set the state machine running
     pio_sm_set_enabled(pio, sm, true);
 }
 %}

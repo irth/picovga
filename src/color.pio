@@ -1,0 +1,30 @@
+.program color
+
+;    pull block
+;    out y, 32
+;.wrap_target
+;    mov x, y             ;
+;loop:
+    wait 1 pin 14
+    nop
+    set pins, 0b0001 [9]
+    set pins, 0b0011 [9]
+    set pins, 0b0111 [9]
+    set pins, 0b1111 [9]
+    set pins, 0b0000 [2]
+;    jmp x--, loop        ;
+
+% c-sdk {
+static inline void color_program_init(PIO pio, uint sm, uint offset, uint pin) {
+    pio_sm_config c = color_program_get_default_config(offset);
+    sm_config_set_set_pins(&c, pin, 4);
+    sm_config_set_clkdiv_int_frac(&c, 79, 114);
+    pio_gpio_init(pio, pin);
+    pio_gpio_init(pio, pin+1);
+    pio_gpio_init(pio, pin+2);
+    pio_gpio_init(pio, pin+3);
+    pio_sm_set_consecutive_pindirs(pio, sm, pin, 4, true);
+    pio_sm_init(pio, sm, offset, &c);
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}

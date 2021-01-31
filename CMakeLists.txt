@@ -15,7 +15,11 @@ add_executable(smol
 	src/entry.c
 )
 
-pico_generate_pio_header(smol ${CMAKE_CURRENT_LIST_DIR}/src/hello.pio)
+pico_generate_pio_header(smol
+	${CMAKE_CURRENT_LIST_DIR}/src/sync.pio)
+
+pico_generate_pio_header(smol
+	${CMAKE_CURRENT_LIST_DIR}/src/color.pio)
 
 target_link_libraries(smol PRIVATE pico_stdlib hardware_pio)
 
